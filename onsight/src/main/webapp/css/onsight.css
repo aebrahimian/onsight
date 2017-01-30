@@ -1,0 +1,63 @@
+.error{
+	color: red;
+}
+
+.error-msg-inline{
+	color: red;
+	margin: 15px;
+}
+
+.success-message{
+	color: green;
+}
+
+
+.vcenter{
+	margin-top: 5%;
+}
+
+/*ramtung poll.css*/
+
+.poll-item:hover {
+	background-color: #eee;
+}
+
+.poll-item {
+	padding: 10px 10px 10px 10px;
+}
+
+.ng-invalid.ng-dirty { 
+	border-color: red; 
+	color: red;
+}
+
+.ng-valid.ng-dirty { 
+	border-color: green;
+}
+
+.error-msg {
+	color: red;
+}
+
+.error_alert{
+	position: fixed;
+	top: 10px;
+	left: 0;
+	right: 0;
+	margin-left: auto;
+	margin-right: auto;
+	max-width: 30%;
+	text-align: center;
+}
+
+footer {
+    width: 100%;
+    bottom: 5px;
+    position: absolute;
+}
+
+/*html,body{
+    height: 100%
+}*/
+
+

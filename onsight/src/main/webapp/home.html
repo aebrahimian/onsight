@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>insta.on.sight</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="css/onsight.css"/>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+</head>
+
+<body ng-app="onsight" ng-controller="onsightCtrl as ctrl">
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">insta.on.sight</a>
+    </div>
+
+    <ul class="nav navbar-nav">
+      <li ng-class="{ active: ctrl.getCurrTab()==='home'}">
+        <a ng-click="ctrl.setCurrTab('home')">Home</a>
+      </li>
+      <li ng-class="{ active: ctrl.getCurrTab()==='usersManagement'}" ng-show="ctrl.adminPermission" >
+        <a ng-click="ctrl.setCurrTab('usersManagement')">Users Management</a>
+      </li>
+    </ul>
+    
+    <ul class="nav navbar-nav navbar-right">
+        <li><span class="navbar-text">{{ctrl.user.name}} {{ctrl.user.family}}</span></li>
+        <li class="dropdown">
+          <a href="logout" type="button" >
+            <span class="glyphicon glyphicon-log-out"></span>
+          </a>
+        </li>
+    </ul>
+
+    <div ng-show="ctrl.alertMsg!==''" class="alert alert-danger error_alert">
+      <strong>{{ctrl.alertMsg}}</strong>
+    </div>
+
+  </div>
+</nav>
+
+<div class="jumbotron" ng-show="ctrl.getCurrTab()==='home' ">
+    <div class="container">
+        <h3>Welcome to Beasty Polls!</h3>
+        <h1>Vote Like a Beast!</h1>
+        <p>Express yourself by joining billions of beasts taking part in the world's most important polls ever!</p>
+        <p><strong>Need to create a poll?</strong> Then do it free, with unlimited responses and live reporting.</p>
+        <p><a href class="btn btn-primary btn-lg" data-toggle="modal" data-target="#createPollDialog" data-backdrop="static">Create Your Poll &raquo;</a></p>
+    </div>
+</div>
+
+<div id="createPollDialog" class="modal fade container" ng-controller="CreateController as createCtrl">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Create New Poll</h4>
+      </div>
+
+      <div class="modal-body" style="padding: 30px">
+        <form name="pollForm" role="form" class="form-horizontal" novalidate>
+            <div class="form-group">
+                <label for="subject" class="control-label">Subject</label>
+                <input type="text" 
+                       name="subject" 
+                       class="form-control" 
+                       id="subject" 
+                       ng-model="subject" 
+                       required />
+                <div ng-messages="pollForm.subject.$error" ng-if="pollForm.subject.$touched">
+                  <div ng-message="required" class="error-msg">You must enter a subject for your poll.</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="descr" class="control-label">Description</label>
+                <input type="text" 
+                       name="descr"
+                       class="form-control" 
+                       id="descr" 
+                       ng-model="descr" 
+                       required/>
+                <div ng-messages="pollForm.descr.$error" ng-if="pollForm.descr.$touched">
+                  <div ng-message="required" class="error-msg">You must enter a short description for your poll.</div>
+                </div>
+            </div>
+            <fieldset class="" >
+                <div data-ng-repeat="choice in choices">
+                  <label class="control-label">Chocie {{$index+1}}</label>
+                  <input type="text" 
+                         name="{{choice.name}}"
+                         ng-model="choice.name" 
+                         required />
+                  <button ng-disabled="$index <= 0" ng-click="moveUp($index)" class="btn btn-xs btn-primary">Move Up</button>
+                  <button ng-disabled="$index >= choices.length -1" ng-click="moveDn($index)" class="btn btn-xs btn-primary">Move Down</button>
+                  <button ng-disabled="choices.length <= 1" ng-click="deleteChoice($index)" class="btn btn-xs btn-danger">Delete</button>
+                  <div ng-messages="pollForm[choice.name].$error" ng-if="pollForm[choice.name].$touched">
+                    <div ng-message="required" class="error-msg">You must enter a subject for your poll.</div>
+                  </div>
+                </div>
+                <button ng-show="$index === choices.length-1" style="margin-top: 10px" class="btn btn-xs btn-success" ng-click="addChoice()">Add</button>
+            </fieldset>            
+            <button style="margin-top: 10px" class="btn btn-xs btn-success" ng-click="addChoice()">Add</button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-success" type="submit" ng-click="pollForm.$valid &&createPoll()">Create</button>
+      </div>
+      </div>
+    </div>
+  </div>
+</div> 
+
+<div ng-show="ctrl.getCurrTab()==='usersManagement' " class="container">
+  <h2 >Unconfirmed Users</h1>
+  <div class="container">
+    <div class="container-fluid col-xs-10">
+      <table class="table table-hover">
+        <tr ng-repeat="currRequest in ctrl.depositRequests">
+          <td>&bull;</td>
+          <td>userId <b>{{currRequest.userId}}</b></td> 
+          <td>requset deposit</td>
+          <td>${{currRequest.amount}}</td>
+          <td>
+            <button ng-click="ctrl.responseDepositRequest(currRequest.id,'accept')" class="btn btn-primary">accept</button>
+            <button ng-click="ctrl.responseDepositRequest(currRequest.id,'reject')" class="btn btn-danger">reject</button>
+          </td>  
+        </tr>
+      </table>
+    </div> 
+    <div ng-show=" loadDepositRequestsErrMsg.length !==0 " class="container-fluid"><span class="error-msg">{{loadDepositRequestsErrMsg}}</span>
+    </div>
+  </div>
+</div>
+
+<footer class="container">
+<small>&copy; insta.on.sight. All rights not reserved.</small>
+</footer>
+
+
+<script type="text/javascript" src="js/angular.min.js"></script> 
+<script type="text/javascript" src="js/angular-messages.min.js"></script>
+<script type="text/javascript" src="js/app.js"></script> 
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Login</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" type="text/css" href="css/onsight.css"/>
+		<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>		
+		<script type="text/javascript" src="js/jquery.min.js"></script> 
+	</head>
+	<body ng-app="onsight" ng-controller="onsightCtrl as ctrl">
+		<div class="container">
+	        <div class="col-md-6 col-md-offset-3 vcenter">          
+	            <form name="loginForm" class="form-signin">
+	                <span class="reauth-email"></span>
+	                <input ng-model="username" type="text" class="form-control" placeholder="Username" required>
+	                <input ng-model="password" type="password" class="form-control" placeholder="Password" required>
+	                <button ng-click="loginForm.$valid && ctrl.login()" class="btn btn-lg btn-primary btn-block btn-signin" type="submit">Sign in</button>
+	                <span class="error">{{signinResMsg}}</span>
+	            </form>
+	            <a href="signup.html">SignUp</a>
+	        </div>
+	    </div>
+
+	   	<script type="text/javascript" src="js/angular.min.js"></script> 
+		<script type="text/javascript" src="js/angular-messages.min.js"></script>
+  		<script type="text/javascript" src="js/app.js"></script> 
+	</body>
+</html>
+
