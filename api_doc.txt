@@ -1,0 +1,51 @@
+- login :	 	path = /login
+				params = username : String ,password=String
+				Description = login to website
+				roles = user,admin 
+				Response = {"result":true/false,"message":"error message if result is false"}
+				Error Messages ="wrong format or missing parameter"
+								"db problem"
+								"wrong username or password"
+								"your account has not been confirmed by admin yet"
+								"Internal Server Error"
+
+- logout :	 	path = /logout
+				params = -----
+				Description = guess!
+				roles = user,admin
+				Response = -----
+
+- signup : 		path = /signup
+				params = username : String ,password=String,name=String,family=String,
+				Description = again,guess!
+				roles = user,admin
+				Response = {"result":true/false,"message":"error message if result is false"}	
+				Error Messages ="wrong format or missing parameter"
+								"db problem"
+								"repeated username"
+
+- userstatus : 	path = /specify_user_status
+				params = username : String ,status=String(confirm/reject),roles=String("admin,user")
+				Description = reject or confirm(and set roles) user by admin 
+				roles = admin
+				Response = {"result":true/false,"message":"error message if result is false"}	
+				Error Messages ="wrong status"
+								"wrong role"
+								"db problem"
+
+- pending users:path = /unconfirmed_users
+				params = -----
+				Description = return a list of users that havn't confirmed by admin yet 
+				roles = admin
+				Response = {"result":true/false,"message":"error message if result is false",
+				"unconfirmedUsers" : [{"username":"arastoo","name":"arastoo","family":"aamel"},{"username":"naghi","name":"naghi","family":"mamoolu"}]}	
+				Error Messages ="db problem"
+
+- user info	:	path = /user_info
+				params = -----
+				Description = return information of current logged in user 
+				roles = admin,user
+				Response = {"result":true/false,"message":"error message if result is false",
+				"userInfo" : {"username":"admin","name":"admin","family":"adminy","roles":["admin","user"]}}
+				Error Messages ="db problem"				
+
