@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 import ir.onsight.dao.UserDao;
-import ir.onsight.dao.UserDao.AuthResult;
+import ir.onsight.dao.UserDao.UserAuthResult;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -16,7 +16,7 @@ public class Login extends HttpServlet {
 	public void doGet(HttpServletRequest req,HttpServletResponse resp) throws ServletException , IOException {
 		String message ="",username,password;
 		boolean hasError=false;
-		AuthResult authRes=null;
+		UserAuthResult authRes=null;
 		username = req.getParameter("username");
 		password = req.getParameter("password");
 		if(username == null || password == null || username.equals("") || password.equals("")){
@@ -34,11 +34,11 @@ public class Login extends HttpServlet {
 			}
 		}
 		if(!hasError){
-			if(authRes == AuthResult.WRONG_PASS || authRes == AuthResult.WRONG_USER)
+			if(authRes == UserAuthResult.WRONG_PASS || authRes == UserAuthResult.WRONG_USER)
 				message = "wrong username or password";
-			else if(authRes == AuthResult.NOT_CONFIRMED)
+			else if(authRes == UserAuthResult.NOT_CONFIRMED)
 				message = "your account has not been confirmed by admin yet";
-			else if(authRes == AuthResult.SUCCESSFUL){
+			else if(authRes == UserAuthResult.SUCCESSFUL){
 				try{
 					req.logout();
 					req.login(username, password);

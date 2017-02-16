@@ -17,7 +17,7 @@ public class UserDao {
 		}
 	}
 	
-	public enum AuthResult{
+	public enum UserAuthResult{
 		SUCCESSFUL(true),
 		WRONG_USER(false),
 		WRONG_PASS(false),
@@ -25,7 +25,7 @@ public class UserDao {
 		
 		private boolean result;
 		
-		AuthResult(boolean result) {
+		UserAuthResult(boolean result) {
 			this.result = result;
 		}
 		
@@ -35,20 +35,20 @@ public class UserDao {
 		
 	}	
 	
-	public static AuthResult authenticate(String username,String password) throws SQLException{		
+	public static UserAuthResult authenticate(String username,String password) throws SQLException{		
 		Connection con = DriverManager.getConnection(CONN_STR);
 		PreparedStatement preStmt = con.prepareStatement("SELECT is_confirmed,password FROM user WHERE username=? LIMIT 1"); 
 		preStmt.setString(1, username);
 		ResultSet userInfo = preStmt.executeQuery();
-		AuthResult result;
+		UserAuthResult result;
 		if(!userInfo.next())
-			result = AuthResult.WRONG_USER;
+			result = UserAuthResult.WRONG_USER;
 		else if(!userInfo.getString("password").equals(password))
-			result = AuthResult.WRONG_PASS;
+			result = UserAuthResult.WRONG_PASS;
 		else if(!userInfo.getBoolean("is_confirmed"))
-			result = AuthResult.NOT_CONFIRMED;
+			result = UserAuthResult.NOT_CONFIRMED;
 		else 
-			result = AuthResult.SUCCESSFUL;
+			result = UserAuthResult.SUCCESSFUL;
 		con.close();
 		return result;
 	}
@@ -94,7 +94,7 @@ public class UserDao {
 		return roles;
 	}
 
-	public static void addNewUser(String username,String password,String name, String family,boolean isConfirmed) throws SQLException{	
+	public static void insertNewUser(String username,String password,String name, String family,boolean isConfirmed) throws SQLException{	
 		Connection con = DriverManager.getConnection(CONN_STR);
 		PreparedStatement preStmt = con.prepareStatement("INSERT INTO user(username,password,name,family,is_confirmed) VALUES(?,?,?,?,?)"); 
 		preStmt.setString(1, username);

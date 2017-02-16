@@ -36,7 +36,7 @@ public class Signup extends HttpServlet {
 					message = "repeated username";			
 					hasError = true ;
 				}else{				
-					UserDao.addNewUser(username, password, name, family, false);
+					UserDao.insertNewUser(username, password, name, family, false);
 				}
 			}
 			catch(SQLException e){
