@@ -37,17 +37,17 @@ create table account (
 );
 
 create table post (
-    id integer not null,
+    id integer not null auto_increment,
     creator_username varchar(50) not null,
     confirmer_username varchar(50) ,
     created_time datetime not null,
     release_time datetime,
     account_username varchar(50),
-    post_status enum('unconfirmed','confirmed','rejected','posted','deleted') not null,
+    post_status enum('UNCONFIRMED','CONFIRMED','REJECTED','POSTED','DELETED') not null,
     is_edited bit not null,
     edit_note varchar(500),
-    media_type enum('video','image') not null,
-    media_url varchar(200),
+    media_type enum('VIDEO','IMAGE'),
+    media_path varchar(200),
     project_name_fa varchar(50),
     project_name_en varchar(50),
     code varchar(20),
@@ -71,6 +71,8 @@ create table post (
     primary key (id)
 );
 
+ALTER TABLE post AUTO_INCREMENT=10001;
+
 -- create table post_stat (
 --     post_id varchar(100) not null,
 --     stat_time timestamp not null,
@@ -84,7 +86,10 @@ create table post (
 insert into role values ('user');
 insert into role values ('admin');
 insert into user values ('admin','admin','admin','adminy',1);
+insert into account values ('test','123');
 insert into user_role values ('admin','admin');
+insert into user_role values ('admin','user');
+
 
 
 

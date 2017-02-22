@@ -15,7 +15,7 @@ import com.google.gson.JsonPrimitive;
 //social media account
 public class Account {
 	private String username;
-	private String password;
+	private transient String password;
 	
 	public Account(String username, String password) {
 		this.username = username;

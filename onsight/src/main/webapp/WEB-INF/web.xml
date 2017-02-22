@@ -4,26 +4,32 @@
 
 <web-app>
 	<display-name>Archetype Created Web Application</display-name>
+
+	<context-param>
+	    <param-name>media_base_path</param-name> 
+	    <param-value>/Users/ali/Desktop/Insta.On.Sight/Posts_Media/</param-value>
+	    <description>Location to store posts media</description>
+	</context-param>
 	
-	 <filter>  
-	   <filter-name>CharacterSetFilter</filter-name>  
-	   <filter-class>ir.onsight.services.filters.CharacterSetFilter</filter-class>  
-	   <init-param>  
-	     <param-name>requestEncoding</param-name>  
-	     <param-value>UTF-8</param-value>  
-	   </init-param>  
-	 </filter>  
-	 
-	 <filter-mapping>  
-	   <filter-name>CharacterSetFilter</filter-name>  
-	   <url-pattern>/*</url-pattern>  
-	 </filter-mapping>
-	
+	<filter>  
+		<filter-name>CharacterSetFilter</filter-name>  
+		<filter-class>ir.onsight.services.filters.CharacterSetFilter</filter-class>  
+		<init-param>  
+	    	<param-name>requestEncoding</param-name>  
+	    	<param-value>UTF-8</param-value>  
+		</init-param>  
+	</filter>   
+	<filter-mapping>  
+		<filter-name>CharacterSetFilter</filter-name>  
+		<url-pattern>/*</url-pattern>  
+	</filter-mapping>
+		
 	<security-constraint>
 		<web-resource-collection>
 			<web-resource-name>shared_resources</web-resource-name>
 			<url-pattern>/home.html</url-pattern>
 			<url-pattern>/user_info</url-pattern>
+			<url-pattern>/accounts</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
 			<role-name>user</role-name>
@@ -42,7 +48,17 @@
 			<role-name>admin</role-name>
 		</auth-constraint>
 	</security-constraint>
-	
+
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>user_resources</web-resource-name>
+			<url-pattern>/register_post</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>user</role-name>
+		</auth-constraint>
+	</security-constraint>
+		
 	<login-config>
 		<auth-method>FORM</auth-method>
 		<form-login-config>
