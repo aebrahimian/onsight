@@ -95,3 +95,24 @@
 								"uploaded file has wrong type.only image and video is acceptable"
 								"error in receiving uploaded file(bad config in client or server)"
 
+- posts 	:	path = /posts
+				params = postStatus : optional parameter .comma seprated string which filter post based on theirs status
+						 			{CONFIRMED,REJECTED,UNCONFIRMED,POSTED,DELETED}
+						 			=ALL : all posts will be returned(except deleted posts)
+						 			="" or not declared : all posts will be returned(except deleted posts)
+						 			={ALL,DELETED} : all posts will be returned
+				Description = get posts of logged in user 
+				roles = user,admin
+				Response = {"result":true/false,"message":"error message if result is false",
+							"posts":[{"id":10001,"creator":{"username":"admin"},"createdTime":"Mar 6, 2017","status":"CONFIRMED",
+							"isEdited":false,"mediaType":"IMAGE","account":{"username":"test"},"projectNameFa":"مجلس",
+							"projectNameEn":"WH","code":"WHP","programFa":"سری","programEn":"seri","locationFa":"تبریز",
+							"locationEn":"tabriz","architectFa":"خودم","architectEn":"myself","year":2014,"size":121,
+							"projectStatusFa":"تمام","projectStatusEn":"end","descriptionFa":"بیا برویم به ان دشت هایی که بسیرا زیباست",
+							"descriptionEn":"come with me to go to the beautiful lands","keywordsFa":"پشمکم,توموت,هوا",
+							"keywordsEn":"pash,tomtot,air"}] }
+				Error Messages ="bad config in server"
+								"db problem"
+								"wrong value of post status"
+
+

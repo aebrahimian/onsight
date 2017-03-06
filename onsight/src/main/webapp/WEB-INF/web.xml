@@ -11,6 +11,12 @@
 	    <description>Location to store posts media</description>
 	</context-param>
 	
+	<context-param>
+	    <param-name>media_base_ur</param-name> 
+	    <param-value>img/</param-value>
+	    <description>base url of posts media</description>
+	</context-param>
+	
 	<filter>  
 		<filter-name>CharacterSetFilter</filter-name>  
 		<filter-class>ir.onsight.services.filters.CharacterSetFilter</filter-class>  
@@ -18,18 +24,20 @@
 	    	<param-name>requestEncoding</param-name>  
 	    	<param-value>UTF-8</param-value>  
 		</init-param>  
-	</filter>   
+	</filter>   	
 	<filter-mapping>  
 		<filter-name>CharacterSetFilter</filter-name>  
 		<url-pattern>/*</url-pattern>  
 	</filter-mapping>
-		
+	
 	<security-constraint>
 		<web-resource-collection>
 			<web-resource-name>shared_resources</web-resource-name>
 			<url-pattern>/home.html</url-pattern>
 			<url-pattern>/user_info</url-pattern>
 			<url-pattern>/accounts</url-pattern>
+			<url-pattern>/img/*</url-pattern>
+			<url-pattern>/posts</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
 			<role-name>user</role-name>
@@ -72,5 +80,5 @@
 	</security-role>
 	<security-role>
 		<role-name>admin</role-name>
-	</security-role>
+	</security-role>	
 </web-app>

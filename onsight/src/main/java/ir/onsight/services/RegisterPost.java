@@ -73,7 +73,12 @@ public class RegisterPost extends HttpServlet {
 			PostDao.insertNewPost(post);
 			Path mediaPath = getMediaPath(mediaPart, post);
 			storeMedia(mediaPart, mediaPath);
-			PostDao.updateMediaInfo(post.getId(), mediaPath.toString(), mediaType);
+			post.setMediaRelativePathFromFileName(mediaPart.getSubmittedFileName());
+			String mediaBaseUrl = getServletContext().getInitParameter("media_base_url");
+			if(mediaBaseUrl == null)
+				 throw new ConfigurationException();
+			post.setMediaWebUrlFromBase(mediaBaseUrl);
+			PostDao.updateMediaInfo(post.getId(), post.getMediaRelativePath(), mediaType);
 		}catch(SQLException e){
 			//TODO maybe sqlexception occurred in the previous line .so we should delete the post
 			message = "db problem";

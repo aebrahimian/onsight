@@ -1,5 +1,6 @@
 package ir.onsight.entity;
 
+import java.nio.file.Paths;
 import java.util.Date;
 
 
@@ -17,7 +18,7 @@ public class Post {
 		IMAGE;
 	}
 	
-	private int id ;
+	private Integer id ;
 	private User creator;
 	private User confirmer;
 	private Date createdTime;
@@ -26,7 +27,8 @@ public class Post {
 	private boolean isEdited;
 	private String editNote;
 	private MediaType mediaType;
-	private transient String mediaPath;
+	private transient String mediaRelativePath;
+	private String mediaWebUrl;
 	//pure info of post
 	private Account account;
 	private String projectNameFa;
@@ -38,8 +40,8 @@ public class Post {
 	private String locationEn;
 	private String architectFa;
 	private String architectEn;
-	private int year;
-	private int size;
+	private Integer year;
+	private Integer size;
 	private String projectStatusFa;
 	private String projectStatusEn;
 	private String descriptionFa;
@@ -47,19 +49,27 @@ public class Post {
 	private String keywordsFa;		//comma separated 
 	private String keywordsEn;
 	
-	public Post(User creator, MediaType mediaType, String mediaPath,
-			Account account, String projectNameFa, String projectNameEn,
-			String code, String programFa, String programEn, String locationFa,
-			String locationEn, String architectFa, String architectEn,
-			int year, int size, String projectStatusFa, String projectStatusEn,
+	public Post(Integer id, User creator, User confirmer, Date createdTime,
+			Date releaseTime, PostStatus status, boolean isEdited,
+			String editNote, MediaType mediaType, String mediaRelativePath,
+			String mediaWebUrl, Account account, String projectNameFa,
+			String projectNameEn, String code, String programFa,
+			String programEn, String locationFa, String locationEn,
+			String architectFa, String architectEn, Integer year, Integer size,
+			String projectStatusFa, String projectStatusEn,
 			String descriptionFa, String descriptionEn, String keywordsFa,
 			String keywordsEn) {
+		this.id = id;
 		this.creator = creator;
-		this.createdTime =new Date();
-		this.status = PostStatus.UNCONFIRMED;
-		this.isEdited = false;
+		this.confirmer = confirmer;
+		this.createdTime = createdTime;
+		this.releaseTime = releaseTime;
+		this.status = status;
+		this.isEdited = isEdited;
+		this.editNote = editNote;
 		this.mediaType = mediaType;
-		this.mediaPath = mediaPath;
+		this.mediaRelativePath = mediaRelativePath;
+		this.mediaWebUrl = mediaWebUrl;
 		this.account = account;
 		this.projectNameFa = projectNameFa;
 		this.projectNameEn = projectNameEn;
@@ -78,6 +88,20 @@ public class Post {
 		this.descriptionEn = descriptionEn;
 		this.keywordsFa = keywordsFa;
 		this.keywordsEn = keywordsEn;
+	}
+	
+	public Post(User creator, MediaType mediaType, String mediaRelativePath,
+			Account account, String projectNameFa, String projectNameEn,
+			String code, String programFa, String programEn, String locationFa,
+			String locationEn, String architectFa, String architectEn,
+			int year, int size, String projectStatusFa, String projectStatusEn,
+			String descriptionFa, String descriptionEn, String keywordsFa,
+			String keywordsEn) {
+		this(null, creator, null, new Date(), null, PostStatus.UNCONFIRMED, false, null,
+			mediaType, mediaRelativePath, null, account, projectNameFa, projectNameEn,
+			code, programFa, programEn, locationFa, locationEn, architectFa, architectEn,
+			year, size, projectStatusFa, projectStatusEn, descriptionFa, descriptionEn,
+			keywordsFa, keywordsEn);
 	}
 	
 	public int getId() {
@@ -152,12 +176,29 @@ public class Post {
 		this.mediaType = mediaType;
 	}
 
-	public String getMediaPath() {
-		return mediaPath;
+	public String getMediaRelativePath() {
+		return mediaRelativePath;
+	}	
+
+	public void setMediaRelativePath(String mediaRelativePath) {
+		this.mediaRelativePath = mediaRelativePath;
 	}
 
-	public void setMediaPath(String mediaPath) {
-		this.mediaPath = mediaPath;
+	public void setMediaRelativePathFromFileName(String mediaFileName) {
+		if(this.id != null)
+			this.mediaRelativePath = Paths.get(this.account.getUsername(),Integer.toString(this.id) + "_" + mediaFileName).toString();
+	}
+	
+	public String getMediaWebUrl() {
+		return mediaWebUrl;
+	}
+
+	public void setMediaWebUrl(String mediaWebUrl) {
+		this.mediaWebUrl = mediaWebUrl;
+	}
+	
+	public void setMediaWebUrlFromBase(String mediaBaseUrl) {
+		this.mediaWebUrl = Paths.get(mediaBaseUrl,this.mediaRelativePath).toString();
 	}
 
 	public Account getAccount() {
@@ -240,19 +281,19 @@ public class Post {
 		this.architectEn = architectEn;
 	}
 
-	public int getYear() {
+	public Integer getYear() {
 		return year;
 	}
 
-	public void setYear(int year) {
+	public void setYear(Integer year) {
 		this.year = year;
 	}
 
-	public int getSize() {
+	public Integer getSize() {
 		return size;
 	}
 
-	public void setSize(int size) {
+	public void setSize(Integer size) {
 		this.size = size;
 	}
 
