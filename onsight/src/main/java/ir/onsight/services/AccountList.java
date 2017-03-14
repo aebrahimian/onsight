@@ -20,7 +20,7 @@ public class AccountList extends HttpServlet {
 		List<Account> accounts = null;
 		try
 		{
-			accounts = AccountDao.getAllAccount();				
+			accounts = AccountDao.getAllAccounts();				
 		}
 		catch(SQLException e){
 			message = "db problem";

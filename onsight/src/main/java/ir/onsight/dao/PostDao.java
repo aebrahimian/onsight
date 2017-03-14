@@ -25,13 +25,13 @@ public class PostDao {
 				System.err.println("Unable to load MySQL JDBC driver");
 		}
 	}
-	
-	public static void insertNewPost(Post post) throws SQLException{	
+
+	public static void insertNewPost(Post post) throws SQLException{
 		Connection con = DriverManager.getConnection(CONN_STR);
 		PreparedStatement preStmt = con.prepareStatement("INSERT INTO post(creator_username,confirmer_username,created_time,release_time,account_username,post_status,is_edited,edit_note,media_type,media_path,"
 																		+ "project_name_fa,project_name_en,code,program_fa,program_en,location_fa,location_en,architect_fa,"
 																		+ "architect_en,year,size,project_status_fa,project_status_en,description_fa,description_en,keywords_fa,keywords_en)"
-																		+ " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"); 
+																		+ " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 		preStmt.setString(1,post.getCreator()!=null ? post.getCreator().getUsername() : null);
 		preStmt.setString(2,post.getConfirmer()!=null ? post.getConfirmer().getUsername() : null);
 		preStmt.setTimestamp(3,post.getCreatedTime()!=null ? new Timestamp(post.getCreatedTime().getTime()) : null);
@@ -60,48 +60,52 @@ public class PostDao {
 		preStmt.setString(26,post.getKeywordsFa());
 		preStmt.setString(27,post.getKeywordsEn());
 		preStmt.executeUpdate();
-		
-		preStmt = con.prepareStatement("SELECT LAST_INSERT_ID()"); 
+
+		preStmt = con.prepareStatement("SELECT LAST_INSERT_ID()");
 		ResultSet postIdInfo = preStmt.executeQuery();
 		if(postIdInfo.next()){
 			post.setId(postIdInfo.getInt("LAST_INSERT_ID()"));
 		}
 		con.close();
 	}
-	
+
 	public static void updateMediaInfo(int postId,String mediaPath,MediaType mediaType) throws SQLException{
 		Connection con = DriverManager.getConnection(CONN_STR);
-		PreparedStatement preStmt = con.prepareStatement("UPDATE post SET media_path=?,media_type=? WHERE id=?"); 
+		PreparedStatement preStmt = con.prepareStatement("UPDATE post SET media_path=?,media_type=? WHERE id=?");
 		preStmt.setString(1, mediaPath);
 		preStmt.setString(2, mediaType.name());
 		preStmt.setInt(3, postId);
 		preStmt.executeUpdate();
 		con.close();
 	}
-	
-	public static void deletePostById(int postId) throws SQLException{	
+
+	public static void deletePostById(int postId) throws SQLException{
 		Connection con = DriverManager.getConnection(CONN_STR);
-		PreparedStatement preStmt = con.prepareStatement("DELETE FROM post WHERE id=?"); 
+		PreparedStatement preStmt = con.prepareStatement("DELETE FROM post WHERE id=?");
 		preStmt.setInt(1, postId);
 		preStmt.executeUpdate();
 		con.close();
 	}
-	
-	public static List<Post> getPostList(String creatorUsername,List<PostStatus> postStatusList) throws SQLException{	
+
+	public static List<Post> getUserPosts(String username, List<PostStatus> postStatusList) throws SQLException{
 		Connection con = DriverManager.getConnection(CONN_STR);
-		String query = "SELECT * FROM post WHERE creator_username = ? and post_status in (";
-		
+		String query = "SELECT * FROM post WHERE post_status in (";
+
 		for(int i =0;i<postStatusList.size();i++){
 			query+="?";
 			if(i!=postStatusList.size()-1)
 				query+=",";
 		}
-		query+=")";		
+		query+=")";
+		if(username != null)
+			query+=" and creator_username = ?";
 		PreparedStatement preStmt = con.prepareStatement(query);
-		preStmt.setString(1, creatorUsername);
-		for (int i = 0; i < postStatusList.size(); i++) {			
-			preStmt.setString(i+2, postStatusList.get(i).name());
+		int i;
+		for (i = 0; i < postStatusList.size(); i++) {
+			preStmt.setString(i+1, postStatusList.get(i).name());
 		}
+		if(username != null)
+			preStmt.setString(i+1, username);
 		ResultSet postsInfo = preStmt.executeQuery();
 		List<Post> posts = new LinkedList<Post>();
 		while(postsInfo.next()){
@@ -110,8 +114,12 @@ public class PostDao {
 		con.close();
 		return posts;
 	}
-	
-	private static Post createPost(ResultSet postInfo) throws SQLException{		
+
+	public static List<Post> getAllPosts(List<PostStatus> postStatusList) throws SQLException{
+		return getUserPosts(null, postStatusList);
+	}
+
+	private static Post createPost(ResultSet postInfo) throws SQLException{
 		Integer id = postInfo.getInt("id")!=0 ? postInfo.getInt("id") : null;
 		User creator = postInfo.getString("creator_username")!=null ? new User(postInfo.getString("creator_username")) : null;
 		User confirmer = postInfo.getString("confirmer_username")!=null ? new User(postInfo.getString("confirmer_username")) : null;;
@@ -140,7 +148,7 @@ public class PostDao {
 		String descriptionEn = postInfo.getString("description_en");
 		String keywordsFa = postInfo.getString("keywords_fa");
 		String keywordsEn = postInfo.getString("keywords_en");
-		
+
 		return new Post(id, creator, confirmer, createdTime, releaseTime, postStatus, isEdited, editNote,
 						mediaType, mediaPath, null, account, projectNameFa, projectNameEn, code, programFa,
 						programEn, locationFa, locationEn, architectFa, architectEn, year, size, projectStatusFa,

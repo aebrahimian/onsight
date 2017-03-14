@@ -101,8 +101,10 @@
 						 			=ALL : all posts will be returned(except deleted posts)
 						 			="" or not declared : all posts will be returned(except deleted posts)
 						 			={ALL,DELETED} : all posts will be returned
+						 allUsers 	: optional parameter .if this param equals true then all posts of all users (with postStatus filter)
+						 			  will be returned (require admin role).otherwise posts of logged in user will be returned. 
 				Description = get posts of logged in user 
-				roles = user,admin
+				roles = user,admin (allUsers=true : only admin)
 				Response = {"result":true/false,"message":"error message if result is false",
 							"posts":[{"id":10001,"creator":{"username":"admin"},"createdTime":"Mar 6, 2017","status":"CONFIRMED",
 							"isEdited":false,"mediaType":"IMAGE","account":{"username":"test"},"projectNameFa":"مجلس",

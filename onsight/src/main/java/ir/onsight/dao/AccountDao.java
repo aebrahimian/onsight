@@ -43,7 +43,7 @@ public class AccountDao {
 		con.close();
 	}
 	
-	public static List<Account> getAllAccount() throws SQLException{	
+	public static List<Account> getAllAccounts() throws SQLException{	
 		Connection con = DriverManager.getConnection(CONN_STR);
 		PreparedStatement preStmt = con.prepareStatement("SELECT username FROM account"); 
 		ResultSet accountsInfo = preStmt.executeQuery();

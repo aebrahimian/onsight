@@ -35,19 +35,34 @@ public class PostList extends HttpServlet {
 		try
 		{
 			String postStatus = req.getParameter("postStatus");
+			String allUsers = req.getParameter("allUsers");
+			boolean isAllUsers = false;
 			if(StringUtils.isBlank(postStatus))
 				postStatus = "ALL";
+			if(!StringUtils.isBlank(allUsers) && allUsers.equalsIgnoreCase("true")){
+				if(req.isUserInRole("admin")){
+					isAllUsers = true;
+				}
+				else{
+					resp.sendError(403);
+					return;
+				}
+			}
 			String[] statusStrList = postStatus.split(",");
-			Set<PostStatus> postStatusList = new HashSet<Post.PostStatus>();
+			Set<PostStatus> postStatusSet = new HashSet<Post.PostStatus>();
 			for(String statusStr : statusStrList){
 				if(statusStr.equalsIgnoreCase("ALL")){
 					for(PostStatus status : Arrays.asList(PostStatus.CONFIRMED,PostStatus.REJECTED,PostStatus.UNCONFIRMED,PostStatus.POSTED))
-						postStatusList.add(status);
+						postStatusSet.add(status);
 				}else{
-					postStatusList.add(PostStatus.valueOf(statusStr.toUpperCase()));					
+					postStatusSet.add(PostStatus.valueOf(statusStr.toUpperCase()));
 				}
 			}
-			posts = PostDao.getPostList(req.getUserPrincipal().getName(),new ArrayList<PostStatus>(postStatusList));
+			List<PostStatus> postStatusList = new ArrayList<PostStatus>(postStatusSet);
+			if(isAllUsers)
+				posts = PostDao.getAllPosts(postStatusList);
+			else
+				posts = PostDao.getUserPosts(req.getUserPrincipal().getName(), postStatusList);
 			String mediaBaseUrl = getServletContext().getInitParameter("media_base_url");
 			if(mediaBaseUrl == null)
 				 throw new ConfigurationException();
@@ -59,13 +74,13 @@ public class PostList extends HttpServlet {
 			e.printStackTrace();
 		}catch(ConfigurationException e){
 			message = "bad config in server";
-			hasError = true;		
+			hasError = true;
 		}catch(IllegalArgumentException e){
 			message = "wrong value of post status";
-			hasError = true;		
+			hasError = true;
 		}
-		
-		
+
+
 		resp.setContentType("text/html");
 		resp.getWriter().println(new Response(!hasError,message,"posts",posts).toJson());
 	}
