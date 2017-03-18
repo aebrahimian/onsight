@@ -117,4 +117,17 @@
 								"db problem"
 								"wrong value of post status"
 
+- delete post :	path = /delete_post
+				params = id : id of post 
+				Description = delete post by it's id
+				roles = user,admin (admin can delete all posts. user can only delete his/her posts)
+				Response = {"result":true/false,"message":"error message if result is false"}
+				Error Messages ="wrong format or missing parameter"
+								"db problem"
+								"wrong id"
+								"it's not your post babe"
+
+								
+
+
 

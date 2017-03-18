@@ -52,18 +52,18 @@ public class RegisterPost extends HttpServlet {
 			String keywordsFa = req.getParameter("keywordsFa");
 			String keywordsEn = req.getParameter("keywordsEn");
 			String creatorUsername = req.getUserPrincipal().getName();
-			if(StringUtils.isBlank(accountUsername) || StringUtils.isBlank(projectNameFa) || StringUtils.isBlank(projectNameEn) || 
-			   StringUtils.isBlank(code) || StringUtils.isBlank(programFa) || StringUtils.isBlank(programEn) || 
-			   StringUtils.isBlank(locationFa) || StringUtils.isBlank(locationEn) || StringUtils.isBlank(architectFa) || 
-			   StringUtils.isBlank(architectEn) || StringUtils.isBlank(projectStatusFa) || StringUtils.isBlank(projectStatusEn) || 
-			   StringUtils.isBlank(descriptionFa) || StringUtils.isBlank(descriptionEn) || StringUtils.isBlank(keywordsFa) || 
+			if(StringUtils.isBlank(accountUsername) || StringUtils.isBlank(projectNameFa) || StringUtils.isBlank(projectNameEn) ||
+			   StringUtils.isBlank(code) || StringUtils.isBlank(programFa) || StringUtils.isBlank(programEn) ||
+			   StringUtils.isBlank(locationFa) || StringUtils.isBlank(locationEn) || StringUtils.isBlank(architectFa) ||
+			   StringUtils.isBlank(architectEn) || StringUtils.isBlank(projectStatusFa) || StringUtils.isBlank(projectStatusEn) ||
+			   StringUtils.isBlank(descriptionFa) || StringUtils.isBlank(descriptionEn) || StringUtils.isBlank(keywordsFa) ||
 			   StringUtils.isBlank(keywordsEn) || mediaPart == null)
 			{
 				throw new IllegalArgumentException("missing(empty) parameter");
 			}
 			if(AccountDao.findAccountByUsername(accountUsername) == null){
 				throw new IllegalArgumentException("no account found with this username");
-			}	
+			}
 			MediaType mediaType = getMediaType(mediaPart);
 			if(mediaType==null)
 				throw new IllegalArgumentException("uploaded file has wrong type.only image and video is acceptable");
@@ -84,7 +84,7 @@ public class RegisterPost extends HttpServlet {
 			message = "db problem";
 			hasError = true;
 		}catch(NumberFormatException e){
-			message = "wrong format parameter";
+			message = "wrong format or missing parameter";
 			hasError = true;
 		}catch(IllegalArgumentException e){
 			message = e.getMessage();
@@ -94,7 +94,7 @@ public class RegisterPost extends HttpServlet {
 			hasError = true;
 			e.printStackTrace();
 			try {
-				PostDao.deletePostById(post.getId());
+				PostDao.deletePost(post.getId());
 			} catch (Exception e1) {
 				//TODO log or print stack trace;
 			}
@@ -109,7 +109,7 @@ public class RegisterPost extends HttpServlet {
 	public void doPost(HttpServletRequest req,HttpServletResponse resp) throws ServletException, IOException {
 		doGet(req,resp);
 	}
-	
+
 	public Path getMediaPath(Part mediaPart,Post post) throws IOException,ConfigurationException{
 		 String mediaFileName = mediaPart.getSubmittedFileName();
 		 int mediaId = post.getId();
@@ -119,9 +119,9 @@ public class RegisterPost extends HttpServlet {
 		 Path accountPath = Paths.get(mediaBasePath,post.getAccount().getUsername());
 		 if(Files.notExists(accountPath))
 			 Files.createDirectory(accountPath);
-		 return accountPath.resolve(Integer.toString(mediaId) + "_" + mediaFileName);	 
+		 return accountPath.resolve(Integer.toString(mediaId) + "_" + mediaFileName);
 	}
-	
+
 	public MediaType getMediaType(Part mediaPart){
 		String mediaType = mediaPart.getContentType().split("/")[0];
 		if(mediaType.equals("video"))
@@ -131,11 +131,11 @@ public class RegisterPost extends HttpServlet {
 		else
 			return null;
 	}
-	
+
 	public void storeMedia(Part mediaPart,Path mediaPath) throws IOException{
 		InputStream mediaContent = mediaPart.getInputStream();
 	    Files.copy(mediaContent,mediaPath);
 	}
-	
-	
+
+
 }
