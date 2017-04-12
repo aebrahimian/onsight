@@ -8,7 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class UserDao {
-	private static final String CONN_STR = "jdbc:mysql://localhost:3306/onsight?user=onsight_access&password=onsightpass";
+	private static final String CONN_STR = "jdbc:mysql://localhost:3306/onsight?serverTimezone=UTC&user=onsight_access&password=onsightpass";
 	static {
 		try {
 				Class.forName("com.mysql.jdbc.Driver");

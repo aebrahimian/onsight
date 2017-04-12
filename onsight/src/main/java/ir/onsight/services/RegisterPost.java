@@ -16,9 +16,11 @@ import javax.servlet.annotation.*;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
+import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.LinkedList;
 import java.util.Locale;
@@ -65,13 +67,14 @@ public class RegisterPost extends HttpServlet {
 				throw new IllegalArgumentException("no account found with this username");
 			}
 			MediaType mediaType = getMediaType(mediaPart);
-			if(mediaType==null)
+			if(mediaType == MediaType.OTHER)
 				throw new IllegalArgumentException("uploaded file has wrong type.only image and video is acceptable");
-			post = new Post(new User(creatorUsername),mediaType, "", new Account(accountUsername), projectNameFa,
+			post = new Post(new User(creatorUsername),mediaType, null, new Account(accountUsername), projectNameFa,
 					 		projectNameEn,code,programFa, programEn,locationFa,locationEn,architectFa, architectEn, year, size,
 					 		projectStatusFa,projectStatusEn, descriptionFa,descriptionEn, keywordsFa, keywordsEn);
 			PostDao.insertNewPost(post);
-			Path mediaPath = getMediaPath(mediaPart, post);
+			String mediaBasePath = getServletContext().getInitParameter("media_base_path");
+			Path mediaPath = getMediaPath(mediaPart, post, mediaBasePath);
 			storeMedia(mediaPart, mediaPath);
 			post.setMediaRelativePathFromFileName(mediaPart.getSubmittedFileName());
 			String mediaBaseUrl = getServletContext().getInitParameter("media_base_url");
@@ -103,17 +106,17 @@ public class RegisterPost extends HttpServlet {
 			hasError = true;
 		}
 		resp.setContentType("text/html");
-		resp.getWriter().println(new Response(!hasError, message,"post",post).toJson());
+		Response response = hasError ? new Response(false, message) : new Response(true, message, "post", post);
+		resp.getWriter().println(response.toJson());
 	}
 
 	public void doPost(HttpServletRequest req,HttpServletResponse resp) throws ServletException, IOException {
 		doGet(req,resp);
 	}
 
-	public Path getMediaPath(Part mediaPart,Post post) throws IOException,ConfigurationException{
+	public static Path getMediaPath(Part mediaPart, Post post, String mediaBasePath) throws IOException,ConfigurationException{
 		 String mediaFileName = mediaPart.getSubmittedFileName();
 		 int mediaId = post.getId();
-		 String mediaBasePath = getServletContext().getInitParameter("media_base_path");
 		 if(mediaBasePath == null || Files.notExists(Paths.get(mediaBasePath)))
 			 throw new ConfigurationException();
 		 Path accountPath = Paths.get(mediaBasePath,post.getAccount().getUsername());
@@ -122,19 +125,22 @@ public class RegisterPost extends HttpServlet {
 		 return accountPath.resolve(Integer.toString(mediaId) + "_" + mediaFileName);
 	}
 
-	public MediaType getMediaType(Part mediaPart){
+	public static MediaType getMediaType(Part mediaPart){
 		String mediaType = mediaPart.getContentType().split("/")[0];
 		if(mediaType.equals("video"))
 			return MediaType.VIDEO;
 		else if(mediaType.equals("image"))
 			return MediaType.IMAGE;
 		else
-			return null;
+			return MediaType.OTHER;
 	}
 
-	public void storeMedia(Part mediaPart,Path mediaPath) throws IOException{
+	public static void storeMedia(Part mediaPart,Path mediaPath) throws IOException{
 		InputStream mediaContent = mediaPart.getInputStream();
-	    Files.copy(mediaContent,mediaPath);
+	    CopyOption[] options = new CopyOption[] {
+	    	StandardCopyOption.REPLACE_EXISTING
+		};
+		Files.copy(mediaContent,mediaPath,options);
 	}
 
 

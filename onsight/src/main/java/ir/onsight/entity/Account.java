@@ -8,7 +8,6 @@ import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 
@@ -16,7 +15,7 @@ import com.google.gson.JsonPrimitive;
 public class Account {
 	private String username;
 	private transient String password;
-	
+
 	public Account(String username, String password) {
 		this.username = username;
 		this.password = password;
@@ -25,8 +24,8 @@ public class Account {
 	public Account(String username){
 		this(username, null);
 	}
-	
-	
+
+
 	public String getUsername() {
 		return username;
 	}
@@ -38,25 +37,25 @@ public class Account {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
+
 	public enum AccountAuthResult{
 		SUCCESSFUL(true),
 		WRONG_USER_PASS(false),
 		ACCOUNT_PROBLEM(false),
 		NET_ERROR(false);
-		
+
 		private boolean result;
-		
+
 		AccountAuthResult(boolean result) {
 			this.result = result;
 		}
-		
+
 		public boolean getResult(){
 			return result;
 		}
-		
+
 	}
-	
+
 	public AccountAuthResult authenticate() throws IOException{
 		URL obj = new URL("https://www.instagram.com/accounts/login/ajax/");
 		HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
@@ -72,7 +71,7 @@ public class Account {
 		int responseCode = con.getResponseCode();
 		if(responseCode != 200)
 			return AccountAuthResult.NET_ERROR;
-		BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));			
+		BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
 		String inputLine;
 		StringBuffer response = new StringBuffer();
 		while ((inputLine = in.readLine()) != null) {
@@ -84,9 +83,9 @@ public class Account {
 			return AccountAuthResult.ACCOUNT_PROBLEM;
 		else if(authRes.getAsBoolean())
 			return AccountAuthResult.SUCCESSFUL;
-		else 
+		else
 			return AccountAuthResult.WRONG_USER_PASS;
 	}
-	
-	
+
+
 }

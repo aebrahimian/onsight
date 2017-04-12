@@ -39,6 +39,7 @@
 			<url-pattern>/img/*</url-pattern>
 			<url-pattern>/posts</url-pattern>
 			<url-pattern>/delete_post</url-pattern>
+			<url-pattern>/edit_post</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
 			<role-name>user</role-name>

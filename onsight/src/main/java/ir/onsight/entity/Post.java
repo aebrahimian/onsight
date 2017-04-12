@@ -12,19 +12,20 @@ public class Post {
 		POSTED,
 		DELETED;
 	}
-	
+
 	public enum MediaType{
 		VIDEO,
-		IMAGE;
+		IMAGE,
+		OTHER;
 	}
-	
+
 	private Integer id ;
 	private User creator;
 	private User confirmer;
 	private Date createdTime;
 	private Date releaseTime;
 	private PostStatus status;
-	private boolean isEdited;
+	private Boolean isEdited;
 	private String editNote;
 	private MediaType mediaType;
 	private transient String mediaRelativePath;
@@ -46,11 +47,11 @@ public class Post {
 	private String projectStatusEn;
 	private String descriptionFa;
 	private String descriptionEn;
-	private String keywordsFa;		//comma separated 
+	private String keywordsFa;		//comma separated
 	private String keywordsEn;
-	
+
 	public Post(Integer id, User creator, User confirmer, Date createdTime,
-			Date releaseTime, PostStatus status, boolean isEdited,
+			Date releaseTime, PostStatus status, Boolean isEdited,
 			String editNote, MediaType mediaType, String mediaRelativePath,
 			String mediaWebUrl, Account account, String projectNameFa,
 			String projectNameEn, String code, String programFa,
@@ -58,7 +59,8 @@ public class Post {
 			String architectFa, String architectEn, Integer year, Integer size,
 			String projectStatusFa, String projectStatusEn,
 			String descriptionFa, String descriptionEn, String keywordsFa,
-			String keywordsEn) {
+			String keywordsEn)
+	{
 		this.id = id;
 		this.creator = creator;
 		this.confirmer = confirmer;
@@ -89,12 +91,12 @@ public class Post {
 		this.keywordsFa = keywordsFa;
 		this.keywordsEn = keywordsEn;
 	}
-	
+
 	public Post(User creator, MediaType mediaType, String mediaRelativePath,
 			Account account, String projectNameFa, String projectNameEn,
 			String code, String programFa, String programEn, String locationFa,
 			String locationEn, String architectFa, String architectEn,
-			int year, int size, String projectStatusFa, String projectStatusEn,
+			Integer year, Integer size, String projectStatusFa, String projectStatusEn,
 			String descriptionFa, String descriptionEn, String keywordsFa,
 			String keywordsEn) {
 		this(null, creator, null, new Date(), null, PostStatus.UNCONFIRMED, false, null,
@@ -103,12 +105,53 @@ public class Post {
 			year, size, projectStatusFa, projectStatusEn, descriptionFa, descriptionEn,
 			keywordsFa, keywordsEn);
 	}
-	
-	public int getId() {
+
+	public void updateFields(User creator, User confirmer, Date createdTime,
+			Date releaseTime, PostStatus status, Boolean isEdited,
+			String editNote, MediaType mediaType, String mediaRelativePath,
+			String mediaWebUrl, Account account, String projectNameFa,
+			String projectNameEn, String code, String programFa,
+			String programEn, String locationFa, String locationEn,
+			String architectFa, String architectEn, Integer year, Integer size,
+			String projectStatusFa, String projectStatusEn,
+			String descriptionFa, String descriptionEn, String keywordsFa,
+			String keywordsEn)
+	{
+		this.creator = creator != null ? creator : this.creator;
+		this.confirmer = confirmer != null ? confirmer : this.confirmer;
+		this.createdTime = createdTime != null ? createdTime : this.createdTime;
+		this.releaseTime = releaseTime != null ? releaseTime : this.releaseTime;
+		this.status = status != null ? status : this.status;
+		this.isEdited = isEdited != null ? isEdited : this.isEdited;
+		this.editNote = editNote != null ? editNote : this.editNote;
+		this.mediaType = mediaType != null ? mediaType : this.mediaType;
+		this.mediaRelativePath = mediaRelativePath != null ? mediaRelativePath : this.mediaRelativePath;
+		this.mediaWebUrl = mediaWebUrl != null ? mediaWebUrl : this.mediaWebUrl;
+		this.account = account != null ? account : this.account;
+		this.projectNameFa = projectNameFa != null ? projectNameFa : this.projectNameFa;
+		this.projectNameEn = projectNameEn != null ? projectNameEn : this.projectNameEn;
+		this.code = code != null ? code : this.code;
+		this.programFa = programFa != null ? programFa : this.programFa;
+		this.programEn = programEn != null ? programEn : this.programEn;
+		this.locationFa = locationFa != null ? locationFa : this.locationFa;
+		this.locationEn = locationEn != null ? locationEn : this.locationEn;
+		this.architectFa = architectFa != null ? architectFa : this.architectFa;
+		this.architectEn = architectEn != null ? architectEn : this.architectEn;
+		this.year = year != null ? year : this.year;
+		this.size = size != null ? size : this.size;
+		this.projectStatusFa = projectStatusFa != null ? projectStatusFa : this.projectStatusFa;
+		this.projectStatusEn = projectStatusEn != null ? projectStatusEn : this.projectStatusEn;
+		this.descriptionFa = descriptionFa != null ? descriptionFa : this.descriptionFa;
+		this.descriptionEn = descriptionEn != null ? descriptionEn : this.descriptionEn;
+		this.keywordsFa = keywordsFa != null ? keywordsFa : this.keywordsFa;
+		this.keywordsEn = keywordsEn != null ? keywordsEn : this.keywordsEn;
+	}
+
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -152,11 +195,11 @@ public class Post {
 		this.status = status;
 	}
 
-	public boolean isEdited() {
+	public Boolean isEdited() {
 		return isEdited;
 	}
 
-	public void setEdited(boolean isEdited) {
+	public void setEdited(Boolean isEdited) {
 		this.isEdited = isEdited;
 	}
 
@@ -178,7 +221,7 @@ public class Post {
 
 	public String getMediaRelativePath() {
 		return mediaRelativePath;
-	}	
+	}
 
 	public void setMediaRelativePath(String mediaRelativePath) {
 		this.mediaRelativePath = mediaRelativePath;
@@ -188,7 +231,7 @@ public class Post {
 		if(this.id != null)
 			this.mediaRelativePath = Paths.get(this.account.getUsername(),Integer.toString(this.id) + "_" + mediaFileName).toString();
 	}
-	
+
 	public String getMediaWebUrl() {
 		return mediaWebUrl;
 	}
@@ -196,7 +239,7 @@ public class Post {
 	public void setMediaWebUrl(String mediaWebUrl) {
 		this.mediaWebUrl = mediaWebUrl;
 	}
-	
+
 	public void setMediaWebUrlFromBase(String mediaBaseUrl) {
 		this.mediaWebUrl = Paths.get(mediaBaseUrl,this.mediaRelativePath).toString();
 	}
@@ -343,6 +386,6 @@ public class Post {
 
 	public void setKeywordsEn(String keywordsEn) {
 		this.keywordsEn = keywordsEn;
-	}	
-	
+	}
+
 }

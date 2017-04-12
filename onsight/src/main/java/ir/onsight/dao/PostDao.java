@@ -7,17 +7,19 @@ import ir.onsight.entity.Post.PostStatus;
 import ir.onsight.entity.User;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class PostDao {
-	private static final String CONN_STR = "jdbc:mysql://localhost:3306/onsight?user=onsight_access&password=onsightpass";
+	private static final String CONN_STR = "jdbc:mysql://localhost:3306/onsight?serverTimezone=UTC&user=onsight_access&password=onsightpass";
 	static {
 		try {
 				Class.forName("com.mysql.jdbc.Driver");
@@ -51,8 +53,8 @@ public class PostDao {
 		preStmt.setString(17,post.getLocationEn());
 		preStmt.setString(18,post.getArchitectFa());
 		preStmt.setString(19,post.getArchitectEn());
-		preStmt.setInt(20,post.getYear()!=null ? post.getYear() : null);
-		preStmt.setInt(21,post.getSize()!=null ? post.getSize() : null);
+		preStmt.setInt(20,post.getYear());
+		preStmt.setInt(21,post.getSize());
 		preStmt.setString(22,post.getProjectStatusFa());
 		preStmt.setString(23,post.getProjectStatusEn());
 		preStmt.setString(24,post.getDescriptionFa());
@@ -166,6 +168,18 @@ public class PostDao {
 		return getUserPosts(null, postStatusList);
 	}
 
+	public static Post getPostById(int postId) throws SQLException{
+		Connection con = DriverManager.getConnection(CONN_STR);
+		PreparedStatement preStmt = con.prepareStatement("SELECT * FROM post WHERE id=?");
+		preStmt.setInt(1, postId);
+		ResultSet postInfo = preStmt.executeQuery();
+		Post post = null ;
+		if(postInfo.next())
+			post = createPost(postInfo);
+		con.close();
+		return post;
+	}
+
 	public static User getPostCreator(int postId) throws SQLException{
 		Connection con = DriverManager.getConnection(CONN_STR);
 		PreparedStatement preStmt = con.prepareStatement("SELECT creator_username FROM post WHERE id=?");
@@ -178,4 +192,54 @@ public class PostDao {
 		return creator;
 	}
 
+
+	public static void updatePost(Post post) throws SQLException{
+		Connection con = DriverManager.getConnection(CONN_STR);
+		if(post == null || post.getId() == null)
+			return;
+		PreparedStatement preStmt = con.prepareStatement("UPDATE post SET creator_username=ifnull(?,creator_username),confirmer_username=ifnull(?,confirmer_username),"
+														+ "created_time=ifnull(?,created_time),release_time=ifnull(?,release_time),"
+														+ "account_username=ifnull(?,account_username),post_status=ifnull(?,post_status),"
+														+ "is_edited=ifnull(?,is_edited),edit_note=ifnull(?,edit_note),"
+														+ "media_type=ifnull(?,media_type),media_path=ifnull(?,media_path),"
+														+ "project_name_fa=ifnull(?,project_name_fa),project_name_en=ifnull(?,project_name_en),"
+														+ "code=ifnull(?,code),program_fa=ifnull(?,program_fa),program_en=ifnull(?,program_en),"
+														+ "location_fa=ifnull(?,location_fa),location_en=ifnull(?,location_en),"
+														+ "architect_fa=ifnull(?,architect_fa),architect_en=ifnull(?,architect_en),"
+														+ "year=ifnull(?,year),size=ifnull(?,size),"
+														+ "project_status_fa=ifnull(?,project_status_fa),project_status_en=ifnull(?,project_status_en),"
+														+ "description_fa=ifnull(?,description_fa),description_en=ifnull(?,description_en),"
+														+ "keywords_fa=ifnull(?,keywords_fa),keywords_en=ifnull(?,keywords_en) "
+														+ "WHERE id=?");
+		preStmt.setString(1,post.getCreator()!=null ? post.getCreator().getUsername() : null);
+		preStmt.setString(2,post.getConfirmer()!=null ? post.getConfirmer().getUsername() : null);
+		preStmt.setTimestamp(3,post.getCreatedTime()!=null ? new Timestamp(post.getCreatedTime().getTime()) : null);
+		preStmt.setTimestamp(4,post.getReleaseTime()!=null ? new Timestamp(post.getReleaseTime().getTime()) : null);
+		preStmt.setString(5,post.getAccount()!=null ? post.getAccount().getUsername() : null);
+		preStmt.setString(6,post.getStatus()!=null ? post.getStatus().name() : null);
+		preStmt.setBoolean(7,post.isEdited());
+		preStmt.setString(8,post.getEditNote());
+		preStmt.setString(9,post.getMediaType()!=null ? post.getMediaType().name() : null);
+		preStmt.setString(10,post.getMediaRelativePath());
+		preStmt.setString(11,post.getProjectNameFa());
+		preStmt.setString(12,post.getProjectNameEn());
+		preStmt.setString(13,post.getCode());
+		preStmt.setString(14,post.getProgramFa());
+		preStmt.setString(15,post.getProgramEn());
+		preStmt.setString(16,post.getLocationFa());
+		preStmt.setString(17,post.getLocationEn());
+		preStmt.setString(18,post.getArchitectFa());
+		preStmt.setString(19,post.getArchitectEn());
+		preStmt.setInt(20,post.getYear());
+		preStmt.setInt(21,post.getSize());
+		preStmt.setString(22,post.getProjectStatusFa());
+		preStmt.setString(23,post.getProjectStatusEn());
+		preStmt.setString(24,post.getDescriptionFa());
+		preStmt.setString(25,post.getDescriptionEn());
+		preStmt.setString(26,post.getKeywordsFa());
+		preStmt.setString(27,post.getKeywordsEn());
+		preStmt.setInt(28,post.getId());
+		preStmt.executeUpdate();
+		con.close();
+	}
 }

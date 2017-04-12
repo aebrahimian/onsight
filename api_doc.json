@@ -1,3 +1,4 @@
+
 - login :	path = /login
 			params = username : String ,password=String
 			Description = login to website
@@ -71,15 +72,15 @@
 				Error Messages ="db problem"
 
 - reg post :	path = /register_post
-				params = media : uploaded file (set form enctype="multipart/form-data")
-						 accountUsername : String . account username which post is belong to .
-						 projectNameFa,projectNameEn,code,programFa,programEn,locationFa,locationEn,
-						 architectFa,architectEn,year,size,projectStatusFa,projectStatusEn,descriptionFa,descriptionEn : String
-						 keywordsFa,keywordsEn : comma separated String 
+				params = - media : uploaded file (set form enctype="multipart/form-data")
+						 - accountUsername : String . account username which post is belong to .
+						 - projectNameFa,projectNameEn,code,programFa,programEn,locationFa,locationEn,
+						   architectFa,architectEn,year,size,projectStatusFa,projectStatusEn,descriptionFa,descriptionEn : String
+						 - keywordsFa,keywordsEn : comma separated String 
 				Description = register new post . 
 				roles = user
 				Response = {"result":true/false,"message":"error message if result is false",
-							"post":{"id":10005,"creator":{"username":"admin"},"createdTime":"Feb 22, 2017 7:56:59 PM",
+							"post":{"id":10005,"creator":{"username":"admin"},"createdTime":1491957498541,
 							"status":"UNCONFIRMED","isEdited":false,"mediaType":"IMAGE","account":{"username":"test"},
 							"projectNameFa":"مجلس","projectNameEn":"WH","code":"WHP","programFa":"سری","programEn":"seri",
 							"locationFa":"تبریز","locationEn":"tabriz","architectFa":"خودم","architectEn":"myself","year":2014,
@@ -93,26 +94,26 @@
 								"db problem"
 								"uploaded file size exceeded the limit"
 								"uploaded file has wrong type.only image and video is acceptable"
-								"error in receiving uploaded file(bad config in client or server)"
+								"error in receiving uploaded file(bad config in client or server)"								
+				* All times in get/set is in Timestamps wiht milliseconds .
 
 - posts 	:	path = /posts
-				params = postStatus : optional parameter .comma seprated string which filter post based on theirs status
-						 			{CONFIRMED,REJECTED,UNCONFIRMED,POSTED,DELETED}
-						 			=ALL : all posts will be returned(except deleted posts)
-						 			="" or not declared : all posts will be returned(except deleted posts)
-						 			={ALL,DELETED} : all posts will be returned
-						 allUsers 	: optional parameter .if this param equals true then all posts of all users (with postStatus filter)
-						 			  will be returned (require admin role).otherwise posts of logged in user will be returned. 
+				params = - postStatus : optional parameter .comma seprated string which filter post based on theirs status
+						 			    {CONFIRMED,REJECTED,UNCONFIRMED,POSTED,DELETED}
+						 			    =ALL : all posts will be returned(except deleted posts)
+						 			    ="" or not declared : all posts will be returned(except deleted posts)
+						 			    ={ALL,DELETED} : all posts will be returned
+						 - allUsers   : optional parameter .if this param equals true then all posts of all users (with postStatus filter)
+						 			    will be returned (require admin role).otherwise posts of logged in user will be returned. 
 				Description = get posts of logged in user 
 				roles = user,admin (allUsers=true : only admin)
 				Response = {"result":true/false,"message":"error message if result is false",
-							"posts":[{"id":10001,"creator":{"username":"admin"},"createdTime":"Mar 6, 2017","status":"CONFIRMED",
-							"isEdited":false,"mediaType":"IMAGE","account":{"username":"test"},"projectNameFa":"مجلس",
-							"projectNameEn":"WH","code":"WHP","programFa":"سری","programEn":"seri","locationFa":"تبریز",
-							"locationEn":"tabriz","architectFa":"خودم","architectEn":"myself","year":2014,"size":121,
-							"projectStatusFa":"تمام","projectStatusEn":"end","descriptionFa":"بیا برویم به ان دشت هایی که بسیرا زیباست",
-							"descriptionEn":"come with me to go to the beautiful lands","keywordsFa":"پشمکم,توموت,هوا",
-							"keywordsEn":"pash,tomtot,air"}] }
+							"posts":[{"id":10005,"creator":{"username":"taher"},"createdTime":1488813424000,"releaseTime":1491947482000,
+							"status":"UNCONFIRMED","isEdited":true,"editNote":"ridi2","mediaType":"IMAGE","mediaWebUrl":"img/test/10005_Screen.png",
+							"account":{"username":"test2"},"projectNameFa":"مجلس2","projectNameEn":"WH2","code":"WHP2","programFa":"سری2",
+							"programEn":"seri2","locationFa":"تبریز2","locationEn":"tabriz2","architectFa":"خودم2","architectEn":"myself2",
+							"year":20142,"size":1212,"projectStatusFa":"تمام2","projectStatusEn":"end2","descriptionFa":"بیاه",
+							"descriptionEn":"come ","keywordsFa":"پشمکم,توموت,هوا2","keywordsEn":"pash,tomtot,air2"}] }
 				Error Messages ="bad config in server"
 								"db problem"
 								"wrong value of post status"
@@ -126,6 +127,31 @@
 								"db problem"
 								"wrong id"
 								"it's not your post babe"
+
+- edit post :	path = /edit_post
+				params = - id : necessary. id(int) of post which you want to edit 
+						 - releaseTime(in time stamp), editNote: optional. only admin can edit this fields 
+						 - media,accountUsername,projectNameFa,projectNameEn,code,programFa,
+						   programEn,locationFa,locationEn,architectFa,architectEn,year,size,
+						   projectStatusFa,projectStatusEn,descriptionFa,descriptionEn,
+						   keywordsFa,keywordsEn: optional. admin/user can edit this fields
+				Description = edit a post with it's id. id is necessary and other existed fileds in the request will be edited. 
+				roles = user/admin
+				Response = json of post with eidted fields.json is like the one in register_post
+				Error Messages ="wrong format or missing parameter"
+								"it's not your post babe"
+								"wrong id"
+								"no account found with this username"
+								"db problem"
+								"uploaded file size exceeded the limit"
+								"uploaded file has wrong type.only image and video is acceptable"
+								"error in receiving uploaded file(bad config in client or server)"	
+								"only admin can change post release time"
+								"only admin can change post edit note"
+								"Server Internal Error"
+
+
+
 
 								
 

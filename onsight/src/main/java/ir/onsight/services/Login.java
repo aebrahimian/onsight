@@ -21,7 +21,7 @@ public class Login extends HttpServlet {
 		password = req.getParameter("password");
 		if(username == null || password == null || username.equals("") || password.equals("")){
 			hasError = true ;
-			message = "wrong format or missing parameter" ;	
+			message = "wrong format or missing parameter" ;
 		}
 		else
 		{
@@ -43,6 +43,7 @@ public class Login extends HttpServlet {
 					req.logout();
 					req.login(username, password);
 				}catch(ServletException ex){
+					ex.printStackTrace();
 					hasError = true;
 					message ="Internal Server Error";
 				}

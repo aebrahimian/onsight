@@ -1,6 +1,7 @@
 package ir.onsight.services;
 
 import ir.onsight.dao.PostDao;
+import ir.onsight.entity.Post;
 import ir.onsight.entity.User;
 import ir.onsight.entity.Post.PostStatus;
 
@@ -20,11 +21,15 @@ public class DeletePost extends HttpServlet {
 		try
 		{
 			int postId = Integer.parseInt(req.getParameter("id"));
-			User creator = PostDao.getPostCreator(postId);
-			if(creator == null)
+			Post post = PostDao.getPostById(postId);
+			if(post == null)
 				throw new IllegalArgumentException("wrong id");
-			if(!req.isUserInRole("admin") && !req.getUserPrincipal().getName().equals(creator.getUsername()))
+			String creatorUsername = post.getCreator() != null ? post.getCreator().getUsername() : null;
+			PostStatus postStatus = post.getStatus();
+			boolean isAdmin = req.isUserInRole("admin");
+			if(!isAdmin && !req.getUserPrincipal().getName().equals(creatorUsername))
 				throw new AccessControlException("it's not your post babe");
+			//TODO can't delete after confirmed by user.may be he/she can.it's depend on ghad
 			PostDao.chnagePostStatus(postId, PostStatus.DELETED);
 		}
 		catch(SQLException e){
