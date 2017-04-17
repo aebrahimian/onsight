@@ -50,6 +50,10 @@ public class Post {
 	private String keywordsFa;		//comma separated
 	private String keywordsEn;
 
+	public Post(int id){
+		this.id = id;
+	}
+
 	public Post(Integer id, User creator, User confirmer, Date createdTime,
 			Date releaseTime, PostStatus status, Boolean isEdited,
 			String editNote, MediaType mediaType, String mediaRelativePath,

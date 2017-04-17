@@ -12,6 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -40,7 +41,7 @@ public class PostDao {
 		preStmt.setTimestamp(4,post.getReleaseTime()!=null ? new Timestamp(post.getReleaseTime().getTime()) : null);
 		preStmt.setString(5,post.getAccount()!=null ? post.getAccount().getUsername() : null);
 		preStmt.setString(6,post.getStatus()!=null ? post.getStatus().name() : null);
-		preStmt.setBoolean(7,post.isEdited());
+		if (post.isEdited() != null) preStmt.setBoolean(7, post.isEdited()); else preStmt.setNull(7, Types.BIT);
 		preStmt.setString(8,post.getEditNote());
 		preStmt.setString(9,post.getMediaType()!=null ? post.getMediaType().name() : null);
 		preStmt.setString(10,post.getMediaRelativePath());
@@ -53,8 +54,8 @@ public class PostDao {
 		preStmt.setString(17,post.getLocationEn());
 		preStmt.setString(18,post.getArchitectFa());
 		preStmt.setString(19,post.getArchitectEn());
-		preStmt.setInt(20,post.getYear());
-		preStmt.setInt(21,post.getSize());
+		if (post.getYear() != null) preStmt.setInt(20, post.getYear()); else preStmt.setNull(20, Types.INTEGER);
+		if (post.getSize() != null) preStmt.setInt(21, post.getSize()); else preStmt.setNull(21, Types.INTEGER);
 		preStmt.setString(22,post.getProjectStatusFa());
 		preStmt.setString(23,post.getProjectStatusEn());
 		preStmt.setString(24,post.getDescriptionFa());
@@ -180,6 +181,18 @@ public class PostDao {
 		return post;
 	}
 
+	public static Boolean isPostExist(int postId) throws SQLException {
+		Connection con = DriverManager.getConnection(CONN_STR);
+		PreparedStatement preStmt = con.prepareStatement("SELECT id FROM post WHERE id=?");
+		preStmt.setInt(1, postId);
+		ResultSet postInfo = preStmt.executeQuery();
+		Boolean isExist = false;
+		if (postInfo.next())
+			isExist = true;
+		con.close();
+		return isExist;
+	}
+
 	public static User getPostCreator(int postId) throws SQLException{
 		Connection con = DriverManager.getConnection(CONN_STR);
 		PreparedStatement preStmt = con.prepareStatement("SELECT creator_username FROM post WHERE id=?");
@@ -217,7 +230,7 @@ public class PostDao {
 		preStmt.setTimestamp(4,post.getReleaseTime()!=null ? new Timestamp(post.getReleaseTime().getTime()) : null);
 		preStmt.setString(5,post.getAccount()!=null ? post.getAccount().getUsername() : null);
 		preStmt.setString(6,post.getStatus()!=null ? post.getStatus().name() : null);
-		preStmt.setBoolean(7,post.isEdited());
+		if (post.isEdited() != null) preStmt.setBoolean(7, post.isEdited()); else preStmt.setNull(7, Types.BIT);
 		preStmt.setString(8,post.getEditNote());
 		preStmt.setString(9,post.getMediaType()!=null ? post.getMediaType().name() : null);
 		preStmt.setString(10,post.getMediaRelativePath());
@@ -230,8 +243,8 @@ public class PostDao {
 		preStmt.setString(17,post.getLocationEn());
 		preStmt.setString(18,post.getArchitectFa());
 		preStmt.setString(19,post.getArchitectEn());
-		preStmt.setInt(20,post.getYear());
-		preStmt.setInt(21,post.getSize());
+		if (post.getYear() != null) preStmt.setInt(20, post.getYear()); else preStmt.setNull(20, Types.INTEGER);
+		if (post.getSize() != null) preStmt.setInt(21, post.getSize()); else preStmt.setNull(21, Types.INTEGER);
 		preStmt.setString(22,post.getProjectStatusFa());
 		preStmt.setString(23,post.getProjectStatusEn());
 		preStmt.setString(24,post.getDescriptionFa());
