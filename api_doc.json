@@ -130,7 +130,7 @@
 
 - edit post :	path = /edit_post
 				params = - id : necessary. id(int) of post which you want to edit 
-						 - releaseTime(in time stamp), editNote: optional. only admin can edit this fields 
+						 - releaseTime(in timestamps), editNote: optional. only admin can edit this fields 
 						 - media,accountUsername,projectNameFa,projectNameEn,code,programFa,
 						   programEn,locationFa,locationEn,architectFa,architectEn,year,size,
 						   projectStatusFa,projectStatusEn,descriptionFa,descriptionEn,
@@ -149,6 +149,21 @@
 								"only admin can change post release time"
 								"only admin can change post edit note"
 								"Server Internal Error"
+
+- post status :	path = /specify_post_status
+				params = - id : necessary. id(int) of post which you want to reject/confirm it. 
+						 - status : necessary. "confirm" or "reject".
+						 - releaseTime : necessary if status is "confirm". in timestamps.
+						 - editNote : optional string if status is "reject". 
+				Description = confirm/reject a post by admin
+				roles = admin
+				Response = {"result":true/false,"message":"error message if result is false"}
+				Error Messages ="wrong format or missing parameter" -> (id, releaseTime)
+								"wrong id"
+								"db problem"
+								"missing(empty) parameter" -> (status)
+								"wrong status"
+
 
 
 

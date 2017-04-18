@@ -53,6 +53,7 @@
 			<url-pattern>/unconfirmed_users</url-pattern>
 			<url-pattern>/specify_user_status</url-pattern>
 			<url-pattern>/add_account</url-pattern>
+			<url-pattern>/specify_post_status</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
 			<role-name>admin</role-name>
