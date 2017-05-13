@@ -19,7 +19,7 @@
 
 	<filter>
 		<filter-name>CharacterSetFilter</filter-name>
-		<filter-class>ir.onsight.services.filters.CharacterSetFilter</filter-class>
+		<filter-class>ir.onsight.services.web.filters.CharacterSetFilter</filter-class>
 		<init-param>
 	    	<param-name>requestEncoding</param-name>
 	    	<param-value>UTF-8</param-value>

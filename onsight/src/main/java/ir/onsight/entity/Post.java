@@ -1,6 +1,10 @@
 package ir.onsight.entity;
 
+import ir.onsight.dao.PostDao;
+import ir.onsight.services.instagram.InstaAPI;
+
 import java.nio.file.Paths;
+import java.sql.SQLException;
 import java.util.Date;
 
 
@@ -29,6 +33,7 @@ public class Post {
 	private String editNote;
 	private MediaType mediaType;
 	private transient String mediaRelativePath;
+	private transient String mediaAbsolutePath;
 	private String mediaWebUrl;
 	//pure info of post
 	private Account account;
@@ -151,6 +156,54 @@ public class Post {
 		this.keywordsEn = keywordsEn != null ? keywordsEn : this.keywordsEn;
 	}
 
+	public String getCaption(){
+		String caption = ".\n"
+					   + "نام پروژه: " + projectNameFa   + "\n"
+					   + "کد: "        + code            + "\n"
+					   + "برنامه: "    + programFa       + "\n"
+					   + "مکان: "      + locationFa      + "\n"
+					   + "معمار: "     + architectFa     + "\n"
+					   + "سال: "       + year            + "\n"
+					   + "مساحت: "     + size            + "\n"
+					   + "وضعیت: "     + projectStatusFa + "\n"
+					   + ".\n.\n"
+					   + descriptionFa + "\n"
+					   + ".\n.\n"
+					   + "Project: "   + projectNameEn   + "\n"
+					   + "Code: "      + code            + "\n"
+					   + "Program: "   + programEn       + "\n"
+					   + "Lcoation: "  + locationEn      + "\n"
+					   + "Architect: " + architectEn     + "\n"
+					   + "Year: "      + year            + "\n"
+					   + "Size: "      + size            + "\n"
+					   + "Status: "    + projectStatusEn + "\n"
+					   + ".\n.\n"
+					   + descriptionEn + "\n"
+					   + ".\n.\n"
+					   + "#" + projectNameFa + "#" + code +"#" + programFa + "#" + locationFa + "#" + architectFa + "#" + size + "#" + projectStatusFa
+					   + "#" + projectNameEn + "#" + programEn + "#" + locationEn + "#" + architectEn + "#" + year + "#" + size + "#" + projectStatusEn
+					   + "#sight#on_sight#معماری#دیدگاه#در_دید#دید#Architecture#آنسایت#آن_سایت#مجله#Architectural#Magazine" ;
+
+		for (String keyword : keywordsFa.split(","))
+			caption += "#" + keyword;
+		for (String keyword : keywordsEn.split(","))
+			caption += "#" + keyword;
+		return caption;
+	}
+
+	public Boolean upload(){
+		if (this.mediaAbsolutePath == null)
+			return false;
+		if (!InstaAPI.uploadPost(this))
+			return false;
+		try {
+			PostDao.chnagePostStatus(this.id, PostStatus.POSTED);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return true;
+	}
+
 	public Integer getId() {
 		return id;
 	}
@@ -234,6 +287,18 @@ public class Post {
 	public void setMediaRelativePathFromFileName(String mediaFileName) {
 		if(this.id != null)
 			this.mediaRelativePath = Paths.get(this.account.getUsername(),Integer.toString(this.id) + "_" + mediaFileName).toString();
+	}
+
+	public String getMediaAbsolutePath() {
+		return mediaAbsolutePath;
+	}
+
+	public void setMediaAbsolutePath(String mediaAbsolutePath) {
+		this.mediaAbsolutePath = mediaAbsolutePath;
+	}
+
+	public void setMediaAbsolutePathFromBase(String mediaBasePath) {
+		this.mediaAbsolutePath = Paths.get(mediaBasePath,this.mediaRelativePath).toString();
 	}
 
 	public String getMediaWebUrl() {

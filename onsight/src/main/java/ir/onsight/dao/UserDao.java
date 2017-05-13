@@ -81,7 +81,7 @@ public class UserDao {
 		return true;
 	}
 
-	public static List<String> findRolesByUsername(String username) throws SQLException{
+	public static List<String> findUserRoles(String username) throws SQLException{
 		Connection con = DriverManager.getConnection(CONN_STR);
 		PreparedStatement preStmt = con.prepareStatement("SELECT * FROM user_role WHERE username=?");
 		preStmt.setString(1, username);

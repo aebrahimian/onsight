@@ -13,11 +13,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.security.auth.callback.ConfirmationCallback;
+
 import org.apache.commons.lang3.StringUtils;
+
+import com.mysql.cj.core.conf.StringPropertyDefinition;
 
 public class PostDao {
 	private static final String CONN_STR = "jdbc:mysql://localhost:3306/onsight?serverTimezone=UTC&user=onsight_access&password=onsightpass";
@@ -137,7 +142,7 @@ public class PostDao {
 		return rowCount > 0;
 	}
 
-	public static List<Post> getUserPosts(String username, List<PostStatus> postStatusList) throws SQLException{
+	public static List<Post> selectPosts(String username, List<PostStatus> postStatusList, Date startReleaseTime) throws SQLException{
 		Connection con = DriverManager.getConnection(CONN_STR);
 		String query = "SELECT * FROM post WHERE post_status in (";
 
@@ -147,15 +152,25 @@ public class PostDao {
 				query+=",";
 		}
 		query+=")";
+
 		if(username != null)
 			query+=" and creator_username = ?";
+
+		if(startReleaseTime != null)
+			query+=" and release_time <= ?";
+
 		PreparedStatement preStmt = con.prepareStatement(query);
+
 		int i;
 		for (i = 0; i < postStatusList.size(); i++) {
 			preStmt.setString(i+1, postStatusList.get(i).name());
 		}
+
 		if(username != null)
-			preStmt.setString(i+1, username);
+			preStmt.setString(++i, username);
+
+		if(startReleaseTime != null)
+			preStmt.setTimestamp(++i, new Timestamp(startReleaseTime.getTime()));
 		ResultSet postsInfo = preStmt.executeQuery();
 		List<Post> posts = new LinkedList<Post>();
 		while(postsInfo.next()){
@@ -165,8 +180,20 @@ public class PostDao {
 		return posts;
 	}
 
+	public static List<Post> selectPosts(PostStatus postStatus, Date startReleaseTime) throws SQLException{
+		return selectPosts(null, Arrays.asList(postStatus), startReleaseTime);
+	}
+
+	public static List<Post> getUserPosts(String username, List<PostStatus> postStatusList) throws SQLException{
+		return selectPosts(username, postStatusList, null);
+	}
+
 	public static List<Post> getAllPosts(List<PostStatus> postStatusList) throws SQLException{
 		return getUserPosts(null, postStatusList);
+	}
+
+	public static List<Post> getPostsByStatus(PostStatus postStatus) throws SQLException{
+		return getAllPosts(Arrays.asList(postStatus));
 	}
 
 	public static Post getPostById(int postId) throws SQLException{
