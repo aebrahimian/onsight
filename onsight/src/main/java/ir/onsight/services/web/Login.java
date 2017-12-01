@@ -1,18 +1,21 @@
 package ir.onsight.services.web;
 
-import java.io.IOException;
-import java.sql.SQLException;
-
 import ir.onsight.dao.UserDao;
 import ir.onsight.dao.UserDao.UserAuthResult;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
-import javax.servlet.annotation.*;
+import java.io.IOException;
+import java.sql.SQLException;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @WebServlet("/login")
 public class Login extends HttpServlet {
 
+	@Override
 	public void doGet(HttpServletRequest req,HttpServletResponse resp) throws ServletException , IOException {
 		String message ="",username,password;
 		boolean hasError=false;
@@ -53,6 +56,7 @@ public class Login extends HttpServlet {
 		resp.getWriter().println(new Response(!hasError && authRes.getResult(), message).toJson());
 	}
 
+	@Override
 	public void doPost(HttpServletRequest req,HttpServletResponse resp) throws ServletException, IOException {
 		doGet(req,resp);
 	}

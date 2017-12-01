@@ -1,0 +1,65 @@
+INSTA.ON.SIGHT:
+
+1-refactor dao delete getconncetion at first of all.
+
+2-refactor services . get parameter with json ande create class automatically and check for missing or emoty field with noatation.and also pass object to daos insteed of fields.or throw handmade exception(wrong format) instead of if else 
+
+3-hash passwords
+
+4-refer to requested page after login instead of home statically
+
+*5-check all services for security constraint
+
+6-delete unused import in services package
+
+7-use gson annotation(for pure info of post ) for post register and edit to create class and check validation.
+
+8-check all security constraints
+
+9-check persian and english fields be persian and english in register post
+
+10-finally of exceptions . line 65 register post .repeated hsaError=true
+
+11-the requested body is too large too cache for authentication
+
+12-set max size and memory size for register post for better performance
+
+13-log or printstacktrace if exceptions happen(register post)
+
+14-correct name conventions
+
+15-user role should be enum not string
+
+16-create internal error instead of tomcat and return instead of internal error message in every service
+
+17-user come and edit post. and change account user name .but don’t change media.so media path in the old account folder.think about that.
+
+18-see tomcat log in startup and correct depreacated styles .like loading jdbc driver manually
+
+***19-when you set datetime with utc in conn string in test.java (and even in tomcat outside of eclipse) it set by irdt .but when you set it with utc in tomcat server it set by utc .investigate about this. 
+
+**20-pom.xml tomcat plugin .shoul source and target should be 1.8 not 1.7
+
+21-**log everything .especially when something go wrong.especially in uploading post procedure.
+
+22-**find a better approach for using php .ex .gobally installed via composer .or install by maven ?and pro/cons of globally installed php on net
+
+23-*** mysql datetime -> long
+
+24-***confirm -> posted bug .when cannot open php file .
+
+25-**** check login system of php api .beacuse if it post login request for every post it is possible that insta ban us .try different account repeatedly.testacii. testacki.
+
+26-**** save media id for further use.
+
+27-getPassword for account is bad practive (maybe). one solution is to move upload function to account class
+
+29-***** check image and video format resolution at register post
+
+30-***** farsi number
+
+31-****** caption is too long and not sent.
+
+32-video should use another function.check all function of php api .upload single .upload time line
+
+33-** consider transaction
